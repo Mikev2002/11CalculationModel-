@@ -4,8 +4,8 @@ from typing import Optional
 
 class CalculationCreate(BaseModel):
     a: float
-    b: float
     type: str = Field(..., description="Add, Sub, Multiply, Divide")
+    b: float
 
     @field_validator("type")
     @classmethod
@@ -18,10 +18,10 @@ class CalculationCreate(BaseModel):
     @field_validator("b")
     @classmethod
     def validate_division(cls, v, info):
-        # info is a ValidationInfo object → the actual data is in info.data
+        # info is ValidationInfo → the actual input values validated so far are in info.data
         data = info.data or {}
 
-        # Only validate division when type="Divide"
+        # At this point, 'type' has already been validated because it appears before 'b'
         if data.get("type") == "Divide" and v == 0:
             raise ValueError("Cannot divide by zero")
 

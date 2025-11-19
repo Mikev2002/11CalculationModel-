@@ -17,9 +17,14 @@ class CalculationCreate(BaseModel):
 
     @field_validator("b")
     @classmethod
-    def validate_division(cls, v, values):
-        if "type" in values and values["type"] == "Divide" and v == 0:
+    def validate_division(cls, v, info):
+        # info is a ValidationInfo object → the actual data is in info.data
+        data = info.data or {}
+
+        # Only validate division when type="Divide"
+        if data.get("type") == "Divide" and v == 0:
             raise ValueError("Cannot divide by zero")
+
         return v
 
 
@@ -33,5 +38,3 @@ class CalculationRead(BaseModel):
     model_config = {
         "from_attributes": True
     }
-
-
